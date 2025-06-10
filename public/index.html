@@ -1,0 +1,238 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Переводчик на Google и Теги</title>
+  <style>
+    :root {
+      --bg: #eef2f5;
+      --card-bg: #ffffff;
+      --btn-bg: #333333;
+      --btn-hover: #444444;
+      --btn-active: #28a745;
+      --text-main: #1a202c;
+      --text-secondary: #4a5568;
+      --input-bg: #f7fafc;
+      --border: #cbd5e0;
+      --radius: 12px;
+      --transition: 0.3s ease;
+      --toast-bg: rgba(33, 33, 33, 0.9);
+      --toast-color: #f7fafc;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: var(--bg);
+      font-family: "Inter", sans-serif;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+    }
+    header{
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      justify-content: space-between;
+      position: absolute;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      margin-top: 100px;
+      display: grid;
+      grid-template-columns: 2fr 320px; /* Увеличена ширина правого блока на 100px */
+      gap: 24px;
+      width: 100%;
+      max-width: 1000px;
+    }
+    @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      padding: 24px;
+    }
+    h1, h2 { margin: 0 0 16px; font-weight: 600; }
+    h1 { font-size: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+    h2 { font-size: 1.25rem; }
+    textarea {
+      width: 100%;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--input-bg);
+      font-size: 1rem;
+      line-height: 1.5;
+      resize: vertical;
+      transition: border-color var(--transition);
+    }
+    textarea:focus { border-color: var(--btn-bg); outline: none; }
+    .translator-options { display: flex; gap: 12px; margin: 20px 0; }
+    select, button.translate-btn {
+      flex: 1;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--input-bg);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    select:focus { border-color: var(--btn-bg); outline: none; }
+    button.translate-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--btn-bg);
+      color: #fff;
+      border-color: var(--btn-bg);
+    }
+    button.translate-btn:hover { background: var(--btn-hover); border-color: var(--btn-hover); }
+    button.translate-btn.active { background: var(--btn-active); border-color: var(--btn-active); }
+    button.translate-btn svg { margin-right: 8px; fill: currentColor; }
+    #result {
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      min-height: 120px;
+      line-height: 1.6;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    #result:hover { background: #edf2f7; }
+    .lang-btn {
+      width: 100%; /* Кнопки заполняют всё пространство */
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-bg);
+      border-radius: var(--radius);
+      color: #fff;
+      font-size: 1rem;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .lang-btn:hover { background: var(--btn-hover); border-color: var(--btn-hover); }
+    .lang-btn.active { background: var(--btn-active); border-color: var(--btn-active); }
+    .lang-btn span.flag { font-size: 1.2rem; }
+    /* Тоаст */
+    #toast {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--toast-bg);
+      color: var(--toast-color);
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+      font-size: 1rem;
+      z-index: 1000;
+    }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>С любовью от Геннадия</h1>
+    <a href="stas.html"><button class="lang-btn">Stas</button></a>
+  </header>
+  <div class="container">
+    <div class="card">
+      <h1>Переводчик</h1>
+      <textarea id="sourceText" rows="4" placeholder="Введите текст для перевода..."></textarea>
+      <div class="translator-options">
+        <select id="targetLang">
+          <option value="ru">Русский</option>
+          <option value="gb">Англиский</option>
+          <option value="es">Испанский</option>
+          <option value="ar">Арабский</option>
+          <option value="pl">Польский</option>
+          <option value="vi">Вьетнамский</option>
+          <option value="id">Индонезийский</option>
+          <option value="de">Немецкий</option>
+          <option value="pt">Португальский</option>
+          <option value="fr">Французский</option>
+          <option value="tr">Турецкий</option>
+        </select>
+        <button class="translate-btn" id="translateBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24">
+            <path d="M5 4v3h5.5v12h3V7H19V4z"/>
+          </svg>
+          Перевести
+        </button>
+      </div>
+      <div id="result">Результат перевода появится здесь…</div>
+    </div>
+    <div class="card">
+      <h2>Теги для каналов</h2>
+      <button class="lang-btn" data-text="Влад и Ники, Дети, Детские игры, Веселье,Семья, Видео для детей,Короткометражки, Детские истории,Игрушки, Малыш, Учимся"><span class="flag">Rus</span> Русский</button>
+      <button class="lang-btn" data-text="Vlad i Niki, Dzieci, Dzieci bawiące się, zabawa, Rodzina, Wideo Dla Dzieci, Szorty, historie Dla Dzieci, Zabawki, Zabawki Dla Dzieci, Dziecko, Nauka"><span class="flag">POL</span> Польский</button>
+      <button class="lang-btn" data-text="Vlad and Niki,Kids,Kids playing,Fun,Family,Video for kids,Shorts,Kids stories,Toys,Kids toys,Baby,Learn"><span class="flag">🇬🇧</span> English</button>
+      <button class="lang-btn" data-text="Vlad y Niki, Niños, Niños jugando, Diversión, Familia, Video para niños, Pantalones cortos, Cuentos para niños, Juguetes,Juguetes para niños, Bebé, Aprender"><span class="flag">🇪🇸</span> Испанский</button>
+      <button class="lang-btn" data-text="مضحك للأطفال,مرح,فيديو للأطفال,لعب أطفال,لعب تخيلي,ألعاب أطفال,فلاد ونيكي,نيكي,ألعاب,أطفال,لعب,فلاد"><span class="flag">🇸🇦</span> Арабский</button>
+      <button class="lang-btn" data-text="Vlad Và Niki, Trẻ em, trẻ em chơi, Vui Vẻ, Gia Đình, Video cho trẻ Em, Quần Short, Câu Chuyện Trẻ em, Đồ Chơi, Đồ chơi Trẻ em, Em Bé, Tìm Hiểu"><span class="flag">🇻🇳</span> Вьетнамский</button>
+      <button class="lang-btn" data-text="Vlad dan Niki,Anak-anak,Bermain anak-anak, Kesenangan, Keluarga, Video untuk anak-anak, Celana pendek,Cerita anak-anak, Mainan, Mainan anak-anak, Bayi, Belajar"><span class="flag">🇮🇩</span> Индонезийский</button>
+      <button class="lang-btn" data-text="Vlad und Niki, Kinder, Kinder spielen, Spaß, Familie, Video für Kinder, Shorts, Kindergeschichten, Spielzeug, Kinderspielzeug, Baby, Lernen"><span class="flag">🇩🇪</span> Немецкий</button>
+      <button class="lang-btn" data-text="Vlad e Niki, Crianças, Crianças brincando, Diversão, Família, vídeo para Crianças, Shorts, histórias infantis, brinquedos, Brinquedos Infantis, Bebê, Aprender"><span class="flag">🇵🇹</span> Португальский</button>
+      <button class="lang-btn" data-text="Vlad et Niki, Enfants, Enfants jouant, Amusement, Famille, Vidéo pour enfants, Shorts, Histoires pour enfants, Jouets, Jouets pour enfants, Bébé, Apprendre"><span class="flag">🇫🇷</span> Французский</button>
+      <button class="lang-btn" data-text="Vlad ve Niki, Çocuklar, Oynayan çocuklar, Eğlenceli, Aile, Çocuklar için video, Şort, Çocuk hikayeleri, Oyuncaklar, Çocuk oyuncakları, Bebek, Öğrenmek"><span class="flag">🇹🇷</span> Турецкий</button>
+    </div>
+  </div>
+  <div id="toast"></div>
+  <script>
+    const toast = document.getElementById('toast');
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1600);
+    }
+    async function doTranslate(lang) {
+      const txt = document.getElementById('sourceText').value.trim();
+      const resBox = document.getElementById('result');
+      if (!txt) return resBox.textContent = 'Пожалуйста, введите текст.';
+      resBox.textContent = 'Перевожу…';
+      try {
+        const r = await fetch('/api/translate', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ text: txt, target: lang })
+        });
+        const data = await r.json();
+        resBox.textContent = data.translated || 'Ошибка перевода';
+      } catch {
+        resBox.textContent = 'Ошибка сети.';
+      }
+    }
+    document.getElementById('translateBtn').addEventListener('click', () => {
+      const btn = document.getElementById('translateBtn');
+      btn.classList.add('active');
+      doTranslate(document.getElementById('targetLang').value);
+      setTimeout(() => btn.classList.remove('active'), 2000);
+    });
+    document.getElementById('result').addEventListener('click', () => {
+      const t = document.getElementById('result').textContent;
+      if (t && !t.includes('Ошибка') && !t.includes('Результат')) {
+        navigator.clipboard.writeText(t).then(() => showToast('Перевод скопирован!'));
+      }
+    });
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        b.classList.add('active');
+        const code = b.dataset.text;
+        navigator.clipboard.writeText(code).then(() => showToast(`Код "${code}" скопирован`));
+        setTimeout(() => b.classList.remove('active'), 2000);
+      });
+    });
+  </script>
+</body>
+</html>
