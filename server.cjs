@@ -8,8 +8,10 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // Явно указываем путь к JSON-ключу Google
-const keyPath = path.join(__dirname, 'google-key.json');
-const translate = new Translate({ keyFilename: keyPath });
+const translate = new Translate({
+  credentials: JSON.parse(process.env.GOOGLE_KEY_JSON)
+});
+
 
 // Маскировка ссылок, хештегов и чисел
 function maskSpecials(text) {
